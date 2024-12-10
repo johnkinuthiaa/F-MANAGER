@@ -2,8 +2,10 @@ package com.slippery.fmanager.service.impl;
 
 import com.slippery.fmanager.dto.UserDto;
 import com.slippery.fmanager.models.User;
+import com.slippery.fmanager.models.Wallet;
 import com.slippery.fmanager.repository.UserRepository;
 import com.slippery.fmanager.service.UserService;
+import com.slippery.fmanager.service.WalletService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,10 +18,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private PasswordEncoder passwordEncoder =new BCryptPasswordEncoder(12);
     private final JwtService jwtService;
+    private final WalletService walletService;
 
-    public UserServiceImpl(UserRepository repository, JwtService jwtService) {
+    public UserServiceImpl(UserRepository repository, JwtService jwtService, WalletService walletService) {
         this.repository = repository;
         this.jwtService = jwtService;
+        this.walletService = walletService;
     }
     private UUID generateAccountNumber(){
         UUID uuid =UUID.randomUUID();
@@ -35,6 +39,12 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setAccountNumber(generateAccountNumber());
             repository.save(user);
+            Wallet wallet = new Wallet();
+            wallet.setAmount(null);
+            wallet.setTransactions(null);
+            wallet.setUser(user);
+            wallet.setWalletAccountNumber(generateAccountNumber());
+            walletService.createNewWallet(wallet);
             response.setMessage("user "+user.getUsername()+" was created successfully");
             response.setStatusCode(200);
             response.setUser(user);

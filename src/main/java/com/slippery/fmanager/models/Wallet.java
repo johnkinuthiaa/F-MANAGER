@@ -20,7 +20,6 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private BigDecimal amount;
-    private String currencyType;
     private UUID walletAccountNumber;
     @ManyToMany
     private List<Transactions> transactions;
