@@ -4,26 +4,29 @@ import com.slippery.fmanager.dto.TransactionDto;
 
 import com.slippery.fmanager.models.TransactionsTabl;
 import com.slippery.fmanager.models.User;
+import com.slippery.fmanager.models.Wallet;
 import com.slippery.fmanager.repository.TransactionsRepository;
 import com.slippery.fmanager.repository.UserRepository;
+import com.slippery.fmanager.repository.WalletRepository;
 import com.slippery.fmanager.service.TransactionService;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService{
     private final TransactionsRepository transactionsRepository;
     private final UserRepository userRepository;
-    private final ResourceLoader resourceLoader;
+    private final WalletRepository walletRepository;
 
-    public TransactionServiceImpl(TransactionsRepository transactionsRepository, UserRepository userRepository, ResourceLoader resourceLoader) {
+
+    public TransactionServiceImpl(TransactionsRepository transactionsRepository, UserRepository userRepository, WalletRepository walletRepository) {
         this.transactionsRepository = transactionsRepository;
         this.userRepository = userRepository;
-        this.resourceLoader = resourceLoader;
+        this.walletRepository = walletRepository;
     }
 
     private UUID generateTransactionId(){
@@ -31,28 +34,65 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     @Override
-    public TransactionDto sendMoney(TransactionsTabl transactions, Long senderId) {
+    public TransactionDto sendMoney(TransactionsTabl transactions) {
         TransactionDto response =new TransactionDto();
-        Optional<User> user =userRepository.findById(senderId);
+
+        Optional<User> sender =userRepository.findUserByAccountNumber(transactions.getSenderId());
+        Optional<User>  receiver =userRepository.findUserByAccountNumber(transactions.getReceiverId());
+
         try{
-            if(user.isPresent()) {
-                TransactionsTabl transactions1 = new TransactionsTabl();
-                transactions1.setAmount(transactions.getAmount());
-                transactions1.setSenderId(transactions.getSenderId());
-                transactions.setReceiverId(transactions.getReceiverId());
-                transactions1.setTransactionType("SEND MONEY");
-                transactions1.setUser(transactions.getUser());
-                transactions1.setTransactionId(generateTransactionId());
-                transactions1.setTransactionTime(LocalDateTime.now());
-                transactionsRepository.save(transactions1);
-                response.setMessage(
-                        transactions1.getTransactionId()+" confirmed. ksh"
-                        +transactions1.getAmount()
-                                +"sent to"
-                                +transactions1.getReceiverId() +
-                                " at "+transactions1.getTransactionTime()
-                );
-                response.setStatusCode(200);
+            if(sender.isPresent() && receiver.isPresent()) {
+                Optional<Wallet> senderWallet =walletRepository.findById(sender.get().getId());
+                Optional<Wallet> receiverWallet =walletRepository.findById(receiver.get().getId());
+                if(senderWallet.get().getAmount() - transactions.getAmount() >0){
+//                    for the sender
+                    TransactionsTabl transactions1 = new TransactionsTabl();
+
+                    transactions1.setAmount(transactions.getAmount());
+                    transactions1.setSenderId(transactions.getSenderId());
+                    transactions1.setReceiverId(transactions.getReceiverId());
+                    transactions1.setTransactionType("SEND MONEY");
+                    transactions1.setUser(sender.get());
+                    transactions1.setTransactionId(generateTransactionId());
+                    transactions1.setTransactionTime(LocalDateTime.now());
+                    transactionsRepository.save(transactions1);
+
+                    //                    for the receiver
+                    TransactionsTabl transactions2 = new TransactionsTabl();
+                    transactions2.setAmount(transactions.getAmount());
+                    transactions2.setSenderId(transactions.getSenderId());
+                    transactions2.setReceiverId(transactions.getReceiverId());
+                    transactions2.setTransactionType("RECEIVE MONEY");
+                    transactions2.setUser(sender.get());
+                    transactions2.setTransactionId(generateTransactionId());
+                    transactions2.setTransactionTime(LocalDateTime.now());
+                    transactionsRepository.save(transactions2);
+
+                    senderWallet.get().setAmount(senderWallet.get().getAmount()-transactions1.getAmount());
+                    receiverWallet.get().setAmount(receiverWallet.get().getAmount() + transactions1.getAmount());
+
+                    walletRepository.save(senderWallet.get());
+                    walletRepository.save(receiverWallet.get());
+
+
+                    response.setMessage(
+                            transactions1.getTransactionId()+" confirmed. ksh"
+                                    +transactions1.getAmount()
+                                    +"sent to"
+                                    +transactions1.getReceiverId() +
+                                    " at "+transactions1.getTransactionTime()+" your balance is Kshs"
+                            +senderWallet.get().getAmount()
+                    );
+                    response.setStatusCode(200);
+                }else{
+                    response.setErrorMessage("Transaction was not complete because your account has insufficient funds");
+                    response.setStatusCode(500);
+                }
+
+
+            }else{
+                response.setErrorMessage("Transaction was not complete");
+                response.setStatusCode(500);
             }
 
 
@@ -65,6 +105,17 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Override
     public TransactionDto getAllTransactionsRecords(Long userId) {
-        return null;
+        TransactionDto response =new TransactionDto();
+        Optional <User> user =userRepository.findById(userId);
+        if(user.isPresent()){
+            var transactions = transactionsRepository.findAll().stream()
+                    .filter(transactionsTabl -> transactionsTabl.getUser().getId().equals(userId))
+                    .collect(Collectors.toList());
+            response.setMessage("All transactions by "+user.get().getUsername());
+            response.setTransactions(transactions);
+        }else{
+            response.setErrorMessage("USER WITH ID"+userId+" not found");
+        }
+        return response;
     }
 }

@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
             user.setAccountNumber(generateAccountNumber());
             repository.save(user);
             Wallet wallet = new Wallet();
-            wallet.setAmount(null);
+            wallet.setAmount(0L);
             wallet.setTransactions(null);
             wallet.setUsers(user);
             wallet.setWalletAccountNumber(generateAccountNumber());

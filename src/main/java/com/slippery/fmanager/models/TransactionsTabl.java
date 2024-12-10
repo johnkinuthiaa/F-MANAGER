@@ -1,5 +1,6 @@
 package com.slippery.fmanager.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,10 +24,11 @@ public class TransactionsTabl {
     private String transactionType;
     private UUID senderId;
     private UUID receiverId;
-    private BigDecimal amount;
+    private Long amount;
     private UUID transactionId;
     private LocalDateTime transactionTime;
     @ManyToOne
+    @JsonBackReference
     private User user;
 
 }

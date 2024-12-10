@@ -16,7 +16,12 @@ public class TransactionController {
         this.service = service;
     }
     @PostMapping("/send")
-    public ResponseEntity<TransactionDto> sendMoney(@RequestBody TransactionsTabl transactions, @RequestParam Long senderId){
-        return ResponseEntity.ok(service.sendMoney(transactions, senderId));
+    public ResponseEntity<TransactionDto> sendMoney(@RequestBody TransactionsTabl transactions){
+        return ResponseEntity.ok(service.sendMoney(transactions));
     }
+    @GetMapping("/transactions/by/{userId}")
+    public ResponseEntity<TransactionDto> getAllTransactionsRecords(@PathVariable@RequestParam Long userId){
+        return ResponseEntity.ok(service.getAllTransactionsRecords(userId));
+    }
+
 }

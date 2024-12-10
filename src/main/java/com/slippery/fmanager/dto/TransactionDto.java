@@ -2,6 +2,7 @@ package com.slippery.fmanager.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.slippery.fmanager.models.TransactionsTabl;
 import com.slippery.fmanager.models.User;
 import jakarta.persistence.ManyToMany;
 import lombok.Data;
@@ -22,4 +23,5 @@ public class TransactionDto {
     private UUID to;
     private BigDecimal amount;
     private User user;
+    private List<TransactionsTabl> transactions;
 }

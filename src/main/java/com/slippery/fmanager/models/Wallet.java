@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +20,7 @@ public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private BigDecimal amount;
+    private Long amount;
     @ManyToMany
     private List<TransactionsTabl> transactions;
     @OneToOne
