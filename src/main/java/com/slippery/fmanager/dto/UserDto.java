@@ -2,6 +2,7 @@ package com.slippery.fmanager.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.slippery.fmanager.models.User;
 import lombok.Data;
 
 @Data
@@ -14,4 +15,5 @@ public class UserDto {
     private String errorMessage;
     private String username;
     private String password;
+    private User user;
 }
