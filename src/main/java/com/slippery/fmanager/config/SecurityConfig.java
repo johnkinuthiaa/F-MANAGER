@@ -29,6 +29,7 @@ public class SecurityConfig {
                 csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests->requests.anyRequest().permitAll())
                 .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .rememberMe(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
 //                .addFilerBefore
                 .build();

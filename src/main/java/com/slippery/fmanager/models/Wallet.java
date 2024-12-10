@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -13,11 +15,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class User {
+public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String username;
-    private String password;
-    private UUID accountNumber;
- }
+    private BigDecimal amount;
+    private String currencyType;
+    private UUID walletAccountNumber;
+    @ManyToMany
+    private List<Transactions> transactions;
+    @OneToOne
+    private User user;
+}

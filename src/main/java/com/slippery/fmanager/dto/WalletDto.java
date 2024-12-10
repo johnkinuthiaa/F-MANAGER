@@ -2,22 +2,15 @@ package com.slippery.fmanager.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.slippery.fmanager.models.User;
+import com.slippery.fmanager.models.Wallet;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserDto {
+public class WalletDto {
     private Long id;
     private String message;
-    private int statusCode;
-    private String errorMessage;
-    private String username;
-    private String password;
-    private String jwtToken;
-    private User user;
-    private UUID accountNumber;
+    private int StatusCode;
+    private Wallet wallet;
 }
