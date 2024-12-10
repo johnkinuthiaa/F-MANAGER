@@ -15,14 +15,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+
 public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private BigDecimal amount;
-    private UUID walletAccountNumber;
     @ManyToMany
-    private List<Transactions> transactions;
+    private List<TransactionsTabl> transactions;
     @OneToOne
-    private User user;
+    private User users;
+    private UUID walletAccountNumber;
 }

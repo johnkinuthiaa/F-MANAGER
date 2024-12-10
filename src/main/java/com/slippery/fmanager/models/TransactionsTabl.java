@@ -1,15 +1,13 @@
 package com.slippery.fmanager.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -17,12 +15,18 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Transactions {
+
+public class TransactionsTabl {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String transactionType;
-    private UUID from;
-    private UUID to;
+    private UUID senderId;
+    private UUID receiverId;
     private BigDecimal amount;
+    private UUID transactionId;
+    private LocalDateTime transactionTime;
+    @ManyToOne
+    private User user;
+
 }

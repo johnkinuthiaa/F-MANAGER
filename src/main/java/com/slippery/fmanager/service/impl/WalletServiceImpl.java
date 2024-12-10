@@ -19,7 +19,7 @@ public class WalletServiceImpl implements WalletService {
         WalletDto response =new WalletDto();
         walletRepository.save(wallet);
         response.setMessage("wallet created!");
-
+        response.setStatusCode(200);
         return response;
     }
 

@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
             Wallet wallet = new Wallet();
             wallet.setAmount(null);
             wallet.setTransactions(null);
-            wallet.setUser(user);
+            wallet.setUsers(user);
             wallet.setWalletAccountNumber(generateAccountNumber());
             walletService.createNewWallet(wallet);
             response.setMessage("user "+user.getUsername()+" was created successfully");
