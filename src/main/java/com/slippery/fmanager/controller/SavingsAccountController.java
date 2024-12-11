@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.*;
 public class SavingsAccountController {
     private final SavingsService service;
     /*
-    * SavingsAccountDto createNewSavingsAccount(SavingsAccount accountDetails,Long userId);
     SavingsAccountDto unsubscribeFromSavingsAccount(Long userId);
-    SavingsAccountDto withdrawFromSavingsAccountToWallet(Long userId,Long amount,Long savingsAccountId);
+
     * */
     public SavingsAccountController(SavingsService service) {
         this.service = service;
@@ -24,6 +23,14 @@ public class SavingsAccountController {
             @RequestParam Long userId
     ){
         return ResponseEntity.ok(service.createNewSavingsAccount(accountDetails, userId));
+    }
+    @PostMapping("/withdraw")
+    public ResponseEntity<SavingsAccountDto> withdrawFromSavingsAccountToWallet(
+            @RequestParam Long userId,
+            @RequestParam Long amount,
+            @RequestParam Long savingsAccountId){
+        return ResponseEntity.ok(service.withdrawFromSavingsAccountToWallet(userId, amount, savingsAccountId));
+
     }
 
 }

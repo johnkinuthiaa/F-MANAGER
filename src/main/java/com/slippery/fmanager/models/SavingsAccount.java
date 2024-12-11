@@ -33,7 +33,6 @@ public class SavingsAccount {
     @JsonBackReference
     private User user;
     @OneToOne
-
     private Wallet wallet;
     @ManyToMany
 
