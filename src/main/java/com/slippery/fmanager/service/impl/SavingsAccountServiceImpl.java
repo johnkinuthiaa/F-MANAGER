@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,16 +49,13 @@ public class SavingsAccountServiceImpl implements SavingsService {
             throw new RuntimeException("user not found");
         }
         try {
-            System.out.println(user.get().getUsername());
-            System.out.println(account);
-            System.out.println(wallet.getUsers().getUsername());
             account.setAmount(0L);
             account.setCreatedOn(LocalDateTime.now());
             account.setSavingAccountNumber(generateUUID());
             account.setGoal(accountDetails.getGoal());
             account.setSavingsType(account.getSavingsType());
             account.setToBeWithdrawnAt(LocalDateTime.now());
-            account.setTransactionsList(null);
+            account.setTransactionsList(new ArrayList<>());
             account.setUser(user.get());
             account.setWallet(wallet);
             repository.save(account);
