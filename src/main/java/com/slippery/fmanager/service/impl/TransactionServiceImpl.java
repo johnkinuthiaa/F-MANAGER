@@ -49,8 +49,8 @@ public class TransactionServiceImpl implements TransactionService{
                     TransactionsTabl transactions1 = new TransactionsTabl();
 
                     transactions1.setAmount(transactions.getAmount());
-                    transactions1.setSenderId(transactions.getSenderId());
-                    transactions1.setReceiverId(transactions.getReceiverId());
+                    transactions1.setSenderId(sender.get().getAccountNumber());
+                    transactions1.setReceiverId(receiver.get().getAccountNumber());
                     transactions1.setTransactionType("SEND MONEY");
                     transactions1.setUser(sender.get());
                     transactions1.setTransactionId(generateTransactionId());
@@ -60,20 +60,25 @@ public class TransactionServiceImpl implements TransactionService{
                     //                    for the receiver
                     TransactionsTabl transactions2 = new TransactionsTabl();
                     transactions2.setAmount(transactions.getAmount());
-                    transactions2.setSenderId(transactions.getSenderId());
-                    transactions2.setReceiverId(transactions.getReceiverId());
+                    transactions2.setSenderId(sender.get().getAccountNumber());
+                    transactions2.setReceiverId(receiver.get().getAccountNumber());
                     transactions2.setTransactionType("RECEIVE MONEY");
-                    transactions2.setUser(sender.get());
+                    transactions2.setUser(receiver.get());
                     transactions2.setTransactionId(generateTransactionId());
                     transactions2.setTransactionTime(LocalDateTime.now());
                     transactionsRepository.save(transactions2);
 
                     senderWallet.get().setAmount(senderWallet.get().getAmount()-transactions1.getAmount());
                     receiverWallet.get().setAmount(receiverWallet.get().getAmount() + transactions1.getAmount());
-
                     walletRepository.save(senderWallet.get());
                     walletRepository.save(receiverWallet.get());
-
+//                   increase the loan limit for the sender by 100 everytime he has a transaction
+                    if(sender.get().isBlackListed()){
+                        sender.get().setLoanLimit(0L);
+                    }else{
+                        sender.get().setLoanLimit(sender.get().getLoanLimit()+100);
+                    }
+                    userRepository.save(sender.get());
 
                     response.setMessage(
                             transactions1.getTransactionId()+" confirmed. ksh"
@@ -116,6 +121,14 @@ public class TransactionServiceImpl implements TransactionService{
         }else{
             response.setErrorMessage("USER WITH ID"+userId+" not found");
         }
+        return response;
+    }
+
+    @Override
+    public TransactionDto getAllTransactionsRecords() {
+        TransactionDto response =new TransactionDto();
+        response.setTransactions(transactionsRepository.findAll());
+        response.setMessage("All transactions");
         return response;
     }
 }

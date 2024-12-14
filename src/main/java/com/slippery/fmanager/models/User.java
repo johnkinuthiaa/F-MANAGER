@@ -21,6 +21,8 @@ public class User {
     private String username;
     private String password;
     private UUID accountNumber;
+    private Long loanLimit;
+    private boolean isBlackListed =false;
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private Set<TransactionsTabl> transactions;
  }

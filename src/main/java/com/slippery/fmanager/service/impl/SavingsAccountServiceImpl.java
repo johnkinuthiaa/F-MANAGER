@@ -59,6 +59,8 @@ public class SavingsAccountServiceImpl implements SavingsService {
             account.setUser(user.get());
             account.setWallet(wallet);
             repository.save(account);
+            user.get().setLoanLimit(user.get().getLoanLimit()+300);
+            userRepository.save(user.get());
             response.setStatusCode(200);
             response.setErrorMessage("Savings account created");
             response.setSavingsAccount(account);
@@ -70,8 +72,82 @@ public class SavingsAccountServiceImpl implements SavingsService {
     }
 
     @Override
+    public SavingsAccountDto depositToSavingsAccount(Long userId, Long amount) {
+        SavingsAccountDto response =new SavingsAccountDto();
+        Optional<User> user =userRepository.findById(userId);
+        if(user.isEmpty()){
+            response.setStatusCode(204);
+            response.setErrorMessage("User not found!");
+            return response;
+        }
+        var savingsAccount =repository.findAll().stream()
+                .filter(
+                        savingAccount -> savingAccount
+                                        .getUser()
+                                        .getId()
+                                        .equals(
+                                                user
+                                                        .get()
+                                                        .getId()))
+                .toList();
+        System.out.println(savingsAccount);
+        if(savingsAccount.isEmpty()){
+            response.setStatusCode(204);
+            response.setErrorMessage("User"+user.get().getUsername()+"does not have a savings account," +
+                    "you can start by creating one!");
+            return response;
+        }
+        if(amount >0){
+
+            savingsAccount.get(0).setAmount(savingsAccount.get(0).getAmount()+amount);
+            repository.save(savingsAccount.get(0));
+            TransactionsTabl transaction =new TransactionsTabl();
+            transaction.setUser(user.get());
+            transaction.setTransactionType("a deposit to savings account".toUpperCase());
+            transaction.setTransactionTime(LocalDateTime.now());
+            transaction.setAmount(amount);
+            transaction.setTransactionId(generateUUID());
+            transaction.setSenderId(user.get().getAccountNumber());
+            transaction.setReceiverId(savingsAccount.get(0).getSavingAccountNumber());
+            transactionsRepository.save(transaction);
+            if(user.get().isBlackListed()){
+                user.get().setLoanLimit(0L);
+            }else{
+                user.get().setLoanLimit(user.get().getLoanLimit()+100);
+            }
+
+            userRepository.save(user.get());
+            response.setMessage(amount+ " successfully deposited to your savings account");
+            response.setStatusCode(200);
+        }else{
+            response.setMessage("amount should be a valid number and not less than 0");
+            response.setStatusCode(200);
+        }
+
+        return response;
+    }
+
+    @Override
     public SavingsAccountDto unsubscribeFromSavingsAccount(Long userId) {
-        return null;
+        SavingsAccountDto response =new SavingsAccountDto();
+        Optional<User> user =userRepository.findById(userId);
+        if(user.isEmpty()){
+            throw new RuntimeException("user not found");
+        }
+        var savingsAccount =repository.findAll().stream()
+                .filter(account -> account.getUser().getId().equals(userId))
+                .toList();
+        if(!savingsAccount.isEmpty() && savingsAccount.get(0).getAmount() ==0){
+            repository.delete(savingsAccount.get(0));
+            response.setStatusCode(200);
+            response.setErrorMessage("Savings account for "+user.get().getUsername()+" deleted");
+        }else{
+            response.setStatusCode(204);
+            response.setErrorMessage("Savings account for "+user.get().getUsername()+
+                    " does not exist or has some money," +
+                    "please withdraw first then delete the account");
+        }
+        return response;
     }
 
     @Override
@@ -86,7 +162,7 @@ public class SavingsAccountServiceImpl implements SavingsService {
                     getUser().
                     getId().
                     equals(userId)){
-                if(account.getAmount()-amount>0){
+                if(account.getAmount()-amount>=0){
                     wallet.setAmount(wallet.getAmount()+amount);
                     walletRepository.save(wallet);
 

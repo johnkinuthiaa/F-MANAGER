@@ -38,6 +38,9 @@ public class UserServiceImpl implements UserService {
         if(existingUser ==null){
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setAccountNumber(generateAccountNumber());
+            user.setLoanLimit(100L);
+
+            user.setBlackListed(false);
             repository.save(user);
             Wallet wallet = new Wallet();
             wallet.setAmount(0L);

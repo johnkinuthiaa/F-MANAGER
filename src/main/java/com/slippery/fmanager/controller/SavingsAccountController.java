@@ -32,5 +32,13 @@ public class SavingsAccountController {
         return ResponseEntity.ok(service.withdrawFromSavingsAccountToWallet(userId, amount, savingsAccountId));
 
     }
+    @DeleteMapping("/delete/savings")
+    public ResponseEntity<SavingsAccountDto> unsubscribeFromSavingsAccount(@RequestParam Long userId){
+        return ResponseEntity.ok(service.unsubscribeFromSavingsAccount(userId));
+    }
+    @PostMapping("/deposit/savings")
+    public ResponseEntity<SavingsAccountDto> depositToSavingsAccount(@RequestParam Long userId, @RequestParam Long amount){
+        return ResponseEntity.ok(service.depositToSavingsAccount(userId,amount));
+    }
 
 }

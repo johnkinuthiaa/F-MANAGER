@@ -6,8 +6,9 @@ public class Todos {
     * savings account -done
     * transactions history -done
     * transactions -done
-    * incomes -not done
-    * expenditure -pending
+    * incomes -done
+    * expenditure -done
+    * loans
     * */
 
 }

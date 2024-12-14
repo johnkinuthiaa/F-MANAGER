@@ -17,6 +17,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public WalletDto createNewWallet(Wallet wallet) {
         WalletDto response =new WalletDto();
+
         walletRepository.save(wallet);
         response.setMessage("wallet created!");
         response.setStatusCode(200);

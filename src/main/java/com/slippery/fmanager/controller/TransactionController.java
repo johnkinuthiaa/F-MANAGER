@@ -5,6 +5,7 @@ import com.slippery.fmanager.dto.TransactionDto;
 import com.slippery.fmanager.models.TransactionsTabl;
 import com.slippery.fmanager.service.TransactionService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,9 +20,14 @@ public class TransactionController {
     public ResponseEntity<TransactionDto> sendMoney(@RequestBody TransactionsTabl transactions){
         return ResponseEntity.ok(service.sendMoney(transactions));
     }
-    @GetMapping("/transactions/by/{userId}")
-    public ResponseEntity<TransactionDto> getAllTransactionsRecords(@PathVariable@RequestParam Long userId){
+    @GetMapping("/transactions/by/userId")
+    public ResponseEntity<TransactionDto> getAllTransactionsRecords(@RequestParam Long userId){
         return ResponseEntity.ok(service.getAllTransactionsRecords(userId));
+    }
+
+    @GetMapping("/all/transactions")
+    public ResponseEntity<TransactionDto> getAllTransactionsRecords(){
+        return ResponseEntity.ok(service.getAllTransactionsRecords());
     }
 
 }
