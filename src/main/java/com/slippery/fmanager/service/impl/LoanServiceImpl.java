@@ -121,6 +121,7 @@ public class LoanServiceImpl implements LoanService {
     public LoanDto repayLoan(Long userId, Long amount) {
         Optional<User> user =userRepository.findById(userId);
         Optional<Wallet>wallet =walletRepository.findById(userId);
+        TransactionsTabl transaction =new TransactionsTabl();
         LoanDto response =new LoanDto();
         if(user.isEmpty() ||wallet.isEmpty()){
             response.setStatusCode(204);
@@ -144,15 +145,40 @@ public class LoanServiceImpl implements LoanService {
             loan.get(0).setDaysExceeded(0);
             loan.get(0).setInterest(0L);
             repository.save(loan.get(0));
+            transaction.setUser(loan.get(0).getUser());
+            transaction.setTransactionType("FULL LOAN REPAYMENT");
+            transaction.setAmount(amount);
+            transaction.setTransactionId(generateId());
+            transaction.setSenderId(user.get().getAccountNumber());
+            transaction.setReceiverId(user.get().getAccountNumber());
+            transaction.setTransactionTime(LocalDateTime.now());
+            transactionsRepository.save(transaction);
+
+            wallet.get().setAmount(wallet.get().getAmount()-amount);
+            walletRepository.save(wallet.get());
+
             return response;
         }
         if(amount -loan.get(0).getAmountToPay()<0){
             loan.get(0).setStatus("PARTIALLY PAID");
             loan.get(0).setAmountToPay(loan.get(0).getAmountToPay()-amount);
             repository.save(loan.get(0));
+
+            transaction.setUser(loan.get(0).getUser());
+            transaction.setTransactionType("PARTIAL LOAN REPAYMENT");
+            transaction.setAmount(amount);
+            transaction.setTransactionId(generateId());
+            transaction.setSenderId(user.get().getAccountNumber());
+            transaction.setReceiverId(user.get().getAccountNumber());
+            transaction.setTransactionTime(LocalDateTime.now());
+            transactionsRepository.save(transaction);
+
+            wallet.get().setAmount(wallet.get().getAmount()-amount);
+            walletRepository.save(wallet.get());
             response.setStatusCode(200);
             response.setMessage("Dear ,"+user.get().getUsername()+" you have partially repaid your loan !your balance is" +
                     " ksh."+loan.get(0).getAmountToPay()+"please complete your loan payment to be legible for another loan");
+
             return response;
         }
 
