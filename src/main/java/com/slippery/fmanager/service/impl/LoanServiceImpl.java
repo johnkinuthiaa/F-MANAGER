@@ -41,7 +41,7 @@ public class LoanServiceImpl implements LoanService {
         List<Loans> existing =repository.findAll().stream()
                 .filter(loans -> loans.getUser().getId().equals(userId))
                 .toList();
-        if(!existing.isEmpty()){
+        if(!existing.isEmpty() ){
             response.setErrorMessage("user already has an existing loan of Ksh"
                     +existing.get(0).getAmountToPay()+
                     " which is to be paid on "+existing.get(0).getPayOn().getDayOfMonth()+" "
@@ -144,7 +144,8 @@ public class LoanServiceImpl implements LoanService {
             loan.get(0).setAmountToPay(0L);
             loan.get(0).setDaysExceeded(0);
             loan.get(0).setInterest(0L);
-            repository.save(loan.get(0));
+            repository.delete(loan.get(0));
+
             transaction.setUser(loan.get(0).getUser());
             transaction.setTransactionType("FULL LOAN REPAYMENT");
             transaction.setAmount(amount);
@@ -159,7 +160,7 @@ public class LoanServiceImpl implements LoanService {
 
             return response;
         }
-        if(amount -loan.get(0).getAmountToPay()<0){
+        if(amount>0 &&amount -loan.get(0).getAmountToPay()<0){
             loan.get(0).setStatus("PARTIALLY PAID");
             loan.get(0).setAmountToPay(loan.get(0).getAmountToPay()-amount);
             repository.save(loan.get(0));
