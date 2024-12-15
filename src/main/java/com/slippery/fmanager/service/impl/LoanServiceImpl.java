@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -68,6 +69,7 @@ public class LoanServiceImpl implements LoanService {
             loan.setPayOn(LocalDateTime.now().plusDays(loansDetails.getPayAfterDays()));
             loan.setPayAfterDays(loansDetails.getPayAfterDays());
             loan.setUser(user.get());
+            loan.setStatus("unpaid".toUpperCase());
             loan.setWallet(wallet.get());
             loan.setLoansAccountUUID(generateId());
             repository.save(loan);
@@ -112,6 +114,48 @@ public class LoanServiceImpl implements LoanService {
             response.setStatusCode(200);
             return response;
         }
+        return response;
+    }
+
+    @Override
+    public LoanDto repayLoan(Long userId, Long amount) {
+        Optional<User> user =userRepository.findById(userId);
+        Optional<Wallet>wallet =walletRepository.findById(userId);
+        LoanDto response =new LoanDto();
+        if(user.isEmpty() ||wallet.isEmpty()){
+            response.setStatusCode(204);
+            response.setErrorMessage("user not found!");
+            return response;
+        }
+        var loan =repository.findAll().stream()
+                .filter(loans -> loans.getUser().getId().equals(user.get().getId()))
+                .toList();
+        if(Objects.equals(loan.get(0).getStatus(), "PAID")){
+            response.setStatusCode(204);
+            response.setErrorMessage("user"+user.get().getUsername()+" does not have an existing loan");
+            return response;
+        }
+        if(loan.get(0).getAmountToPay()-amount==0){
+            response.setStatusCode(200);
+            response.setMessage("Dear ,"+user.get().getUsername()+" you have fully repaid your loan !Thanks for your cooperation and see you again");
+            loan.get(0).setStatus("PAID");
+            loan.get(0).setPayAfterDays(0);
+            loan.get(0).setAmountToPay(0L);
+            loan.get(0).setDaysExceeded(0);
+            loan.get(0).setInterest(0L);
+            repository.save(loan.get(0));
+            return response;
+        }
+        if(amount -loan.get(0).getAmountToPay()<0){
+            loan.get(0).setStatus("PARTIALLY PAID");
+            loan.get(0).setAmountToPay(loan.get(0).getAmountToPay()-amount);
+            repository.save(loan.get(0));
+            response.setStatusCode(200);
+            response.setMessage("Dear ,"+user.get().getUsername()+" you have partially repaid your loan !your balance is" +
+                    " ksh."+loan.get(0).getAmountToPay()+"please complete your loan payment to be legible for another loan");
+            return response;
+        }
+
         return response;
     }
 

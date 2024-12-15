@@ -27,6 +27,7 @@ public class Loans {
     private int daysExceeded;
     private Long interest;
     private Long amountToPay;
+    private String status;
     @ManyToMany
     private List<TransactionsTabl> transactions;
     @OneToOne

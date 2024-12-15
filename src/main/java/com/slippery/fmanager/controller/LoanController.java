@@ -18,4 +18,8 @@ public class LoanController {
     public ResponseEntity<LoanDto> getLoan(@RequestParam Long userId, @RequestBody Loans loansDetails){
         return ResponseEntity.ok(service.getLoan(userId, loansDetails));
     }
+    @PostMapping("/repay")
+    public ResponseEntity<LoanDto> repayLoan(@RequestParam Long userId, @RequestParam Long amount){
+        return ResponseEntity.ok(service.repayLoan(userId, amount));
+    }
 }

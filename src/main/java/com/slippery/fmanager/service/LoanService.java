@@ -5,4 +5,5 @@ import com.slippery.fmanager.models.Loans;
 
 public interface LoanService {
     LoanDto getLoan(Long userId, Loans loansDetails);
+    LoanDto repayLoan(Long userId,Long amount);
 }
