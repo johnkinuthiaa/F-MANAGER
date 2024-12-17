@@ -10,10 +10,6 @@ public class HomeController {
     public String transactions(){
         return "transactions.html";
     }
-    @GetMapping("/")
-    public String homepage(){
-        return "index.html";
-    }
     @GetMapping("/swagger/docs")
     public String swagger(){
         return "/swagger-ui/index.html";
