@@ -6,5 +6,6 @@ import com.slippery.fmanager.models.User;
 public interface UserService {
     UserDto register(User user);
     UserDto login(User user);
-    UserDto deleteUser(Long UserId);
+    UserDto deleteUser(Long userId);
+    UserDto getUserInformation(Long userId);
 }

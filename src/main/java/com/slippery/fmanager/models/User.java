@@ -23,6 +23,7 @@ public class User {
     private UUID accountNumber;
     private Long loanLimit;
     private boolean isBlackListed =false;
+    private boolean isActive=false;
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private Set<TransactionsTabl> transactions;
  }

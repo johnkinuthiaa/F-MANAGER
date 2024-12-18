@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -63,7 +64,10 @@ public class UserServiceImpl implements UserService {
     public UserDto login(User user) {
         UserDto response =new UserDto();
         User existingUser =repository.findUserByUsername(user.getUsername());
+
         if(existingUser !=null){
+            existingUser.setActive(true);
+            repository.save(existingUser);
             response.setJwtToken(jwtService.generateJwtToken(user.getUsername()));
             response.setMessage("user "+user.getUsername()+" logged in successfully");
             response.setStatusCode(200);
@@ -78,5 +82,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto deleteUser(Long UserId) {
         return null;
+    }
+
+    @Override
+    public UserDto getUserInformation(Long userId) {
+        UserDto response =new UserDto();
+        Optional<User> user =repository.findById(userId);
+        if(user.isEmpty()){
+            response.setMessage("user not found");
+            response.setStatusCode(204);
+            return response;
+        }
+        response.setUser(user.get());
+        response.setMessage("user with id"+userId);
+        response.setStatusCode(200);
+        return response;
     }
 }
