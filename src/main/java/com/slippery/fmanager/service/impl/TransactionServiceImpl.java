@@ -12,6 +12,7 @@ import com.slippery.fmanager.service.TransactionService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -109,13 +110,15 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     @Override
-    public TransactionDto getAllTransactionsRecords(Long userId) {
+    public TransactionDto getAllTransactionsRecordsByUser(Long userId) {
         TransactionDto response =new TransactionDto();
         Optional <User> user =userRepository.findById(userId);
+
         if(user.isPresent()){
-            var transactions = transactionsRepository.findAll().stream()
-                    .filter(transactionsTabl -> transactionsTabl.getUser().getId().equals(userId))
-                    .collect(Collectors.toList());
+//            var transactions = transactionsRepository.findAll().stream()
+//                            .filter(transactionsTabl -> transactionsTabl.getUser().equals(user.get()))
+//                                    .toList();
+            List<TransactionsTabl> transactions =transactionsRepository.findByUser(user.get());
             response.setMessage("All transactions by "+user.get().getUsername());
             response.setTransactions(transactions);
         }else{

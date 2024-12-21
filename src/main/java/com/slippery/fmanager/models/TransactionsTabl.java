@@ -29,6 +29,6 @@ public class TransactionsTabl {
     private LocalDateTime transactionTime;
     @ManyToOne
     @JsonBackReference
-    private User user;
+    public User user;
 
 }

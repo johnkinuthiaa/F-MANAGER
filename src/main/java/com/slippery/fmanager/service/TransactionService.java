@@ -5,6 +5,6 @@ import com.slippery.fmanager.models.TransactionsTabl;
 
 public interface TransactionService {
     TransactionDto sendMoney(TransactionsTabl transactions);
-    TransactionDto getAllTransactionsRecords(Long userId);
+    TransactionDto getAllTransactionsRecordsByUser(Long userId);
     TransactionDto getAllTransactionsRecords();
 }

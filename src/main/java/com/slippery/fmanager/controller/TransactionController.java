@@ -21,9 +21,9 @@ public class TransactionController {
     public ResponseEntity<TransactionDto> sendMoney(@RequestBody TransactionsTabl transactions){
         return ResponseEntity.ok(service.sendMoney(transactions));
     }
-    @GetMapping("/transactions/by/userId")
+    @GetMapping("/by/userId")
     public ResponseEntity<TransactionDto> getAllTransactionsRecords(@RequestParam Long userId){
-        return ResponseEntity.ok(service.getAllTransactionsRecords(userId));
+        return ResponseEntity.ok(service.getAllTransactionsRecordsByUser(userId));
     }
 
     @GetMapping("/all/transactions")
