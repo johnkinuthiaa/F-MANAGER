@@ -114,10 +114,7 @@ public class TransactionServiceImpl implements TransactionService{
         TransactionDto response =new TransactionDto();
         Optional <User> user =userRepository.findById(userId);
 
-        if(user.isPresent()){
-//            var transactions = transactionsRepository.findAll().stream()
-//                            .filter(transactionsTabl -> transactionsTabl.getUser().equals(user.get()))
-//                                    .toList();
+        if(user.isPresent()){;
             List<TransactionsTabl> transactions =transactionsRepository.findByUser(user.get());
             response.setMessage("All transactions by "+user.get().getUsername());
             response.setTransactions(transactions);
