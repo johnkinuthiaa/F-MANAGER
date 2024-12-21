@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface TransactionsRepository extends JpaRepository<TransactionsTabl,Long> {
+//    idk why
     List<TransactionsTabl> findByUser(User user);
 }
