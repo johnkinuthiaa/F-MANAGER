@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.slippery.fmanager.models.Wallet;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -13,4 +15,5 @@ public class WalletDto {
     private String message;
     private int StatusCode;
     private Wallet wallet;
+    private List<Wallet> wallets;
 }

@@ -82,12 +82,14 @@ public class TransactionServiceImpl implements TransactionService{
                     userRepository.save(sender.get());
 
                     response.setMessage(
-                            transactions1.getTransactionId()+" confirmed. ksh"
+                            transactions1.getTransactionId().toString().substring(0,7)+" confirmed. ksh"
                                     +transactions1.getAmount()
-                                    +"sent to"
-                                    +transactions1.getReceiverId() +
-                                    " at "+transactions1.getTransactionTime()+" your balance is Kshs"
-                            +senderWallet.get().getAmount()
+                                    +"sent to "
+                                    +receiver.get().getUsername() +
+                                    " on "+transactions1.getTransactionTime().toString().substring(0,10)+" at "+
+                                    transactions1.getTransactionTime().toString().substring(11,18)
+                                    +" hrs your balance is Kshs "
+                                    +senderWallet.get().getAmount()
                     );
                     response.setStatusCode(200);
                 }else{

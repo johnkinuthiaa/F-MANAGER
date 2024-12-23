@@ -4,4 +4,5 @@ import com.slippery.fmanager.models.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WalletRepository extends JpaRepository<Wallet,Long > {
+    Wallet findByUsers_Id(Long userId);
 }

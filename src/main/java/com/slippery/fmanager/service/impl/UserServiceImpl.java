@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
             Wallet wallet = new Wallet();
             wallet.setAmount(0L);
             wallet.setTransactions(null);
+            user.setPassword(null);
             wallet.setUsers(user);
             wallet.setWalletAccountNumber(generateAccountNumber());
             walletService.createNewWallet(wallet);
@@ -93,7 +94,9 @@ public class UserServiceImpl implements UserService {
             response.setStatusCode(204);
             return response;
         }
-        response.setUser(user.get());
+        User user1 = user.get();
+        user1.setPassword(null);
+        response.setUser(user1);
         response.setMessage("user with id"+userId);
         response.setStatusCode(200);
         return response;
