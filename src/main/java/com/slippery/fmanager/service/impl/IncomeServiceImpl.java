@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+// income service
 public class IncomeServiceImpl implements IncomesService {
     private final IncomesRepository repository;
     private final UserRepository userRepository;
