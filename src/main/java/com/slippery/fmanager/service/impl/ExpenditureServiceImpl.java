@@ -28,7 +28,6 @@ public class ExpenditureServiceImpl implements ExpenditureService {
         ExpendituresDto response =new ExpendituresDto();
         if(user.isPresent()){
             expenditureDetails.setSpentOn(LocalDateTime.now());
-            expenditureDetails.setPercentageIncrease(1);
             expenditureDetails.setUser(user.get());
             repository.save(expenditureDetails);
             response.setMessage("new Expenditure saved");

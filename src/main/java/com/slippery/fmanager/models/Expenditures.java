@@ -12,17 +12,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 public class Expenditures {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String transactionType;
+    private String name;
     private LocalDateTime spentOn;
     private String category;
     private Long amount;
-    private Long totalAmountSpent;
-    private float percentageIncrease;
     @ManyToOne
     @JsonBackReference
     private User user;
