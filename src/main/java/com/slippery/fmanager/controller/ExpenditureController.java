@@ -23,4 +23,8 @@ public class ExpenditureController {
     public ResponseEntity<ExpendituresDto> getAllExpendituresByUser(@RequestParam Long userId){
         return ResponseEntity.ok(service.getAllExpendituresByUser(userId));
     }
+    @DeleteMapping("/delete/expenditure/id")
+    public ResponseEntity<ExpendituresDto> deleteExpenditureById(@RequestParam Long userId, @RequestParam Long expenditureId){
+        return ResponseEntity.ok(service.deleteExpenditureById(userId,expenditureId));
+    }
 }

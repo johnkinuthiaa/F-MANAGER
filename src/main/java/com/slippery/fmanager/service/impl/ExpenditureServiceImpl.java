@@ -59,4 +59,31 @@ public class ExpenditureServiceImpl implements ExpenditureService {
         }
         return response;
     }
+
+    @Override
+    public ExpendituresDto deleteExpenditureById(Long userId, Long expenditureId) {
+        Optional<User> user =userRepository.findById(userId);
+        ExpendituresDto response =new ExpendituresDto();
+        Optional<Expenditures> expenditure =repository.findById(expenditureId) ;
+        if(user.isEmpty()){
+            response.setMessage("user not found");
+            response.setStatusCode(404);
+            return response;
+        }
+        if(expenditure.isEmpty()){
+            response.setMessage("expenditure not found");
+            response.setStatusCode(404);
+            return response;
+        }
+        if(user.get().getId().equals(expenditure.get().getUser().getId())){
+            repository.deleteById(expenditureId);
+            response.setMessage("Expenditure with id "+expenditureId+" deleted");
+            response.setStatusCode(200);
+            return response;
+        }else{
+            response.setMessage("user not found");
+            response.setStatusCode(404);
+        }
+        return response;
+    }
 }
