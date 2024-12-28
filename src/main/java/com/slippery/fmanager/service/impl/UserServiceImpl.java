@@ -20,11 +20,13 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder =new BCryptPasswordEncoder(12);
     private final JwtService jwtService;
     private final WalletService walletService;
+    private final SendEmail sendEmail ;
 
-    public UserServiceImpl(UserRepository repository, JwtService jwtService, WalletService walletService) {
+    public UserServiceImpl(UserRepository repository, JwtService jwtService, WalletService walletService, SendEmail sendEmail) {
         this.repository = repository;
         this.jwtService = jwtService;
         this.walletService = walletService;
+        this.sendEmail = sendEmail;
     }
     private UUID generateAccountNumber(){
         UUID uuid =UUID.randomUUID();
@@ -46,10 +48,32 @@ public class UserServiceImpl implements UserService {
             Wallet wallet = new Wallet();
             wallet.setAmount(0L);
             wallet.setTransactions(null);
-            user.setPassword(null);
+            user.setPassword(user.getPassword());
             wallet.setUsers(user);
             wallet.setWalletAccountNumber(generateAccountNumber());
             walletService.createNewWallet(wallet);
+
+            sendEmail.Mail(user.getEmail()," Welcome to financia - Your Journey to Better Financial Management Starts Here!",
+                    "Dear "+user.getUsername()+",\n" +
+                            "\n" +
+                            "Thank you for registering with Financia! We’re excited to have you onboard as you take the next step towards managing your finances with ease and confidence. \n" +
+                            "\n" +
+                            "With Financia, you’ll have all the tools you need to track spending, create budgets, set financial goals, and much more—all in one easy-to-use platform. Whether you’re looking to save, invest, or simply gain a clearer picture of your financial situation, we’re here to help you achieve your goals.\n" +
+                            "\n" +
+                            "**Here’s how to get started:**\n" +
+                            "\n" +
+                            "1. **Log in** to your account using your email and password.\n" +
+                            "2. **Set up your profile** and connect your bank accounts or credit cards to track transactions.\n" +
+                            "3. **Explore features** like budgeting, savings goals, or financial reports to customize the app for your needs.\n" +
+                            "\n" +
+                            "If you have any questions or need assistance, our support team is here to help! Feel free to reach out to us at johnmuniu477@gmail.com for more details.\n" +
+                            "\n" +
+                            "We’re looking forward to being part of your financial journey!\n" +
+                            "\n" +
+                            "Best regards,  \n" +
+                            "The Financia Team  \n" +
+                            "[] | [johnmuniu477@gmail.com]"
+                    );
             response.setMessage("user "+user.getUsername()+" was created successfully");
             response.setStatusCode(200);
             response.setUser(user);
