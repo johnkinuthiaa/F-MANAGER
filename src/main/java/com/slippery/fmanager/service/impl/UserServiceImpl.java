@@ -6,6 +6,7 @@ import com.slippery.fmanager.models.Wallet;
 import com.slippery.fmanager.repository.UserRepository;
 import com.slippery.fmanager.service.UserService;
 import com.slippery.fmanager.service.WalletService;
+import org.springframework.boot.info.OsInfo;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,7 +54,8 @@ public class UserServiceImpl implements UserService {
             wallet.setWalletAccountNumber(generateAccountNumber());
             walletService.createNewWallet(wallet);
 
-            sendEmail.Mail(user.getEmail()," Welcome to financia - Your Journey to Better Financial Management Starts Here!",
+            sendEmail.Mail(user.getEmail(),
+                    " Welcome to financia - Your Journey to Better Financial Management Starts Here!",
                     "Dear "+user.getUsername()+",\n" +
                             "\n" +
                             "Thank you for registering with Financia! We’re excited to have you onboard as you take the next step towards managing your finances with ease and confidence. \n" +
@@ -96,6 +98,7 @@ public class UserServiceImpl implements UserService {
             response.setJwtToken(jwtService.generateJwtToken(user.getUsername()));
             response.setMessage("user "+user.getUsername()+" logged in successfully");
             response.setStatusCode(200);
+
         }else{
             response.setMessage("user not logged in successfully as user with the username was not found!");
             response.setStatusCode(500);
